@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "python": {
+    "implementations_tested": ["CPython"],
+    "versions_tested": ["3.10.13", "3.11.9"],
+    "assertions_required": true
+  },
+  "packages": [
+    {
+      "name": "sympy",
+      "version": "1.14.0",
+      "required_by": ["all_s"]
+    },
+    {
+      "name": "mpmath",
+      "version": "1.3.0",
+      "required_by": ["all_s"],
+      "relationship": "pinned SymPy runtime dependency"
+    }
+  ],
+  "stages": {
+    "coupling": {
+      "entrypoint": "evidence/launch/all_s_s4_coupling_identity_exact.py",
+      "dependencies": ["python-standard-library"]
+    },
+    "scalar": {
+      "entrypoint": "evidence/launch/all_s_s4_scalar_hopf_vector_exact.py",
+      "dependencies": ["python-standard-library"]
+    },
+    "aggregate": {
+      "entrypoint": "evidence/launch/all_s_s4_explicit_counterexample_checker.py",
+      "dependencies": ["python-standard-library"]
+    },
+    "all_s": {
+      "entrypoint": "evidence/launch/independent_all_s_symbolic_checks.py",
+      "dependencies": ["sympy==1.14.0", "mpmath==1.3.0"]
+    }
+  }
+}

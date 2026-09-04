@@ -1,0 +1,38 @@
+End-to-end certificate-driver replay after package repair
+2026-09-03; Windows 10.0.26200; CPython 3.11.9
+GNU bash 5.3.9; SymPy 1.14.0; mpmath 1.3.0
+Command: FORSYTHE_PYTHON=<CPython-3.11.9> bash computer_validated_certificate/verify.sh
+
+[coupling] independent C.3.9/C.3.10/C.13.2 identity check
+PASS: independent exact-interval coupling identity
+(C.3.9) polynomial division, (C.3.10), and (C.13.2) agree
+coupling order: target rows (h_-,h_+), source columns (h_-,h_+)
+coupling sign pattern: [-,+; +,-]
+
+[scalar] focused restart-four Hopf-vector certificate
+PASS: exact a-normalized scalar Hopf-vector certificate
+|kappa| > 2^6 and 3.72 < omega < 3.724
+max |A|,|A_a| < 2^10; max |V|,|V_a| < 2^17
+max entry |D| < 2^4, induced row-sum |W| < 2^3, max |qvec| < 2^2
+|det(theta I_2-DW)| > omega^2 > 1
+a-normalized scalar Hopf-vector Euclidean norm < 2^29 < 2^25000
+
+[aggregate] restart-four finite inputs and exponent ledger
+PASS: exact finite inputs for the explicit s=4 counterexample
+unique transverse Hopf branch and positive physical margins
+intrinsic and scalar-to-raw tangent certificates passed
+raw C3/C1, Lyapunov--Schmidt, Floquet, and Lyapunov--Perron exponents passed
+selected amplitude exponent = 500000000
+selected shadowing index exponent = 1200000000
+
+[all_s] degree-elevation identities and seeded exact regression tests
+PASS: exact all-s elevation identities
+- normalized far-root elevation identity
+- critical Jacobian orientation determinant
+- characteristic reduction on seeded exact rational test instances
+- Hopf-matrix similarity scaling
+- three-phase return differential
+- Chebyshev Newton-sum degree bound for d=1,...,8
+- complete binary-exponent ledger from the aggregate s=4 checker
+
+PASS: computer-validated certificate replay completed
