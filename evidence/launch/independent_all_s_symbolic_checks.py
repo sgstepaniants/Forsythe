@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
-"""Independent exact checks for the all-s>=4 elevation manuscript.
+"""Exact symbolic identities and seeded regressions for all-s>=4 elevation.
 
-These checks are supplementary.  The existence arguments (implicit-function,
-Lyapunov--Schmidt, and Lyapunov--Perron) are proved analytically in the
-manuscript.  This script checks several finite algebraic identities exactly.
+The manuscript supplies the implicit-function, Lyapunov--Schmidt, and
+Lyapunov--Perron arguments. This module supplies their finite algebraic layer.
 """
 from __future__ import annotations
 
 if not __debug__:
     raise RuntimeError(
-        "Verification assertions are disabled. "
-        "Run without -O/-OO and unset PYTHONOPTIMIZE."
+        "Verification assertions are disabled; Python optimization flags "
+        "are incompatible with this certificate."
     )
 
 import random
@@ -45,11 +44,10 @@ def check_orientation_identity() -> None:
 
 
 def check_characteristic_reduction() -> None:
-    """Check det(lambda I-J)=(lambda-1)^(d-2)det(theta I_3-M).
+    """Identity det(lambda I-J)=(lambda-1)^(d-2)det(theta I_3-M).
 
-    Several exact random integer instances are evaluated. Since this is a
-    polynomial identity in the entries, the manuscript supplies the general
-    elimination proof; these tests guard signs and block placement.
+    Three seeded exact integer instances cover each listed dimension. The
+    manuscript supplies the general polynomial elimination argument.
     """
     lam = sp.symbols("lambda")
     rng = random.Random(20260825)
@@ -92,7 +90,7 @@ def check_characteristic_reduction() -> None:
 
 
 def check_similarity_scaling() -> None:
-    """Check the block scaling used in the far-root Hopf persistence."""
+    """Block scaling used in the far-root Hopf persistence."""
     R = sp.symbols("R", nonzero=True)
     a = sp.symbols("a")
     x1, x2, y1, y2 = sp.symbols("x1 x2 y1 y2")
@@ -114,7 +112,7 @@ def check_elevation_factor_identity() -> None:
 
 
 def check_three_phase_differential() -> None:
-    """Check (6.0f) for j=0,1 using SR0=Delta*u-rho."""
+    """Identity (6.0f) for j=0,1 using SR0=Delta*u-rho."""
     C, rho, Delta_u, S_R0 = sp.symbols("C rho Delta_u S_R0")
     # The only algebraic relation used is S_R0=Delta_u-rho.
     for j in (0, 1):
@@ -125,7 +123,7 @@ def check_three_phase_differential() -> None:
 
 
 def check_chebyshev_newton_degree(max_d: int = 8) -> None:
-    """Verify the Newton-sum degree bound for the listed finite range of d."""
+    """Newton-sum degree bound for the listed finite range of d."""
     x, y = sp.symbols("x y")
     for d in range(1, max_d + 1):
         Phi = sp.expand(16 * (1 - (-1) ** d * sp.chebyshevt(d, x - 1)))
@@ -154,7 +152,7 @@ def check_chebyshev_newton_degree(max_d: int = 8) -> None:
 
 
 def check_binary_exponent_ledger() -> None:
-    """Recheck every integer exponent comparison in the aggregate s=4 checker."""
+    """Integer exponent comparisons in the aggregate s=4 certificate."""
     D = 3_000_000
     V = 200_000
     P0 = 18_100_000
@@ -218,7 +216,7 @@ def main() -> None:
     print("- Hopf-matrix similarity scaling")
     print("- three-phase return differential")
     print("- Chebyshev Newton-sum degree bound for d=1,...,8")
-    print("- complete binary-exponent ledger from the aggregate s=4 checker")
+    print("- complete binary-exponent ledger from the aggregate s=4 certificate")
 
 
 if __name__ == "__main__":

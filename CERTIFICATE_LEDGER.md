@@ -1,10 +1,9 @@
 # Certificate-to-manuscript ledger
 
-This ledger maps the retained groups of finite numerical premises used by the
-restart-four certificate to fail-closed exact assertions. The named programs
-are in `evidence/launch/` relative to this directory. Assertions execute with
-ordinary Python semantics; `verify.sh` rejects `-O`, `-OO`, and
-`PYTHONOPTIMIZE` before loading any certificate.
+This ledger maps the finite numerical premises used by the restart-four
+certificate to exact assertions. The named programs are in `evidence/launch/`
+relative to this directory. `verify.sh` executes them with Python assertions
+enabled.
 
 ## Data and sign conventions
 
@@ -16,39 +15,34 @@ ordinary Python semantics; `verify.sh` rejects `-O`, `-OO`, and
 - Its certified value-level sign pattern is `[-,+; +,-]` in that row/column
   order.
 - Scalar tangent coordinates use `(u,B_C,B_0,B_1)`, while the intrinsic lift
-  returns `(B_C,B_0,B_1,u)`. The tangent checker applies this permutation
-  explicitly.
+  returns `(B_C,B_0,B_1,u)`. The tangent certificate uses this explicit
+  permutation.
 - `C`, all terminating decimal seed data, interval endpoints, and all derived
-  certificate arithmetic are exact `fractions.Fraction` values. The only
-  stage using SymPy is `all_s`.
+  certificate arithmetic are exact `fractions.Fraction` values. SymPy is used
+  by the supplementary `all_s` stage.
 
 For the coupling signs in particular, (C.3.9) gives
 `Delta*(V_g)^H = p_g*Q + P*q_g - (V_g)_C - A_g*rq`. Hence (C.3.10) expands as
 `d_h[V_g] = (-2/C)*(p_g(h)*Q(h) + P(h)*q_g(h) + (V_g)_C - A_g*rq(h))`, which is
 the expression in (C.13.2) and in the transverse-Hopf program.
 
-## Program dependency, input, and output ledger
+## Program inputs, outputs, and dependencies
 
-| Program | Direct inputs | Principal outputs/assertions | Dependency and independence status |
+| Program | Direct inputs | Principal outputs/assertions | Dependencies |
 |---|---|---|---|
-| `all_s_s4_transverse_hopf_exact.py` | Hard-coded rational `P,Qbar,C,q` boxes | Root isolation, critical branch, `Tmatrix`, positive amplitudes, Hopf sign change and transversality | Standalone; Python standard library only |
-| `all_s_s4_coupling_identity_exact.py` | Rational seed and interval primitives from the definition prefix of the transverse program | Constructs `p_g,q_g`, obtains `(V_g)^H` by literal division in (C.3.9), and compares (C.3.10), (C.13.2), and `Tmatrix`, including all five jet components | Loads only the definition prefix, so the original localized Hopf assertions do not run first; calls `build` for the matrix being audited but does not use that matrix, its entries, or its formula to construct `(V_g)^H` |
-| `all_s_s4_local_majorants_exact.py` | Transverse-Hopf environment | Root/weight/factor margins, phase systems, Gram bounds, derivative bounds | Executes the transverse program; downstream rather than independent of it |
-| `all_s_s4_intrinsic_lift_exact.py` | Transverse-Hopf environment | Three-phase recursion, quadratic coefficients, `4x4` lift and inverse bound | Executes the transverse program; independently rebuilds the phase solves |
-| `all_s_s4_scalar_hopf_vector_exact.py` | `Tmatrix`, roots, and scalar data from the transverse program | Scalar Jacobian blocks, reconstructed `V_g`, resolvent and Hopf-vector bounds | Executes the transverse program and reconstructs `V_g` from `Tmatrix`; intentionally not the independent coupling-sign check |
+| `all_s_s4_transverse_hopf_exact.py` | Hard-coded rational `P,Qbar,C,q` boxes | Root isolation, critical branch, `Tmatrix`, positive amplitudes, Hopf sign change and transversality | Self-contained; Python standard library |
+| `all_s_s4_coupling_identity_exact.py` | Rational seed and interval primitives from the definition prefix of the transverse program | Constructs `p_g,q_g`, obtains `(V_g)^H` by literal division in (C.3.9), and compares (C.3.10), (C.13.2), and `Tmatrix`, including all five jet components | Loads the definition prefix and constructs `(V_g)^H` by polynomial division; the audited matrix is used at the comparison step |
+| `all_s_s4_local_majorants_exact.py` | Transverse-Hopf environment | Root/weight/factor margins, phase systems, Gram bounds, derivative bounds | Transverse program prerequisite |
+| `all_s_s4_intrinsic_lift_exact.py` | Transverse-Hopf environment | Three-phase recursion, quadratic coefficients, `4x4` lift and inverse bound | Transverse program prerequisite; phase solves rebuilt within the lift |
+| `all_s_s4_scalar_hopf_vector_exact.py` | `Tmatrix`, roots, and scalar data from the transverse program | Scalar Jacobian blocks, reconstructed `V_g`, resolvent and Hopf-vector bounds | Transverse program prerequisite; `V_g` reconstruction from `Tmatrix` |
 | `all_s_s4_scalar_to_raw_tangent_exact.py` | Local-majorant, intrinsic-lift, and scalar-Hopf-vector environments | Coordinate-order permutation, raw tangent and visible-vector bounds | Transitively depends on the transverse program through its three inputs |
-| `all_s_s4_explicit_counterexample_checker.py` | Scalar-to-raw environment and integer exponent ledger | Aggregate finite restart-four assertions and contraction exponent comparisons | Aggregate/transitive check, not an independent reconstruction of upstream algebra |
-| `independent_all_s_symbolic_checks.py` | Fixed seed `20260825`; SymPy 1.14.0 | General symbolic identities where stated, characteristic determinant on seeded exact integer instances for `d=3,4,5,6`, Newton-sum checks for `d=1,...,8`, and exponent arithmetic | Standalone supplementary regression stage; finite instances are not a proof for arbitrary `d` |
+| `all_s_s4_explicit_counterexample_checker.py` | Scalar-to-raw environment and integer exponent ledger | Aggregate finite restart-four assertions and contraction exponent comparisons | Upstream certificate chain |
+| `independent_all_s_symbolic_checks.py` | Fixed seed `20260825`; SymPy 1.14.0 | General symbolic identities where stated, characteristic determinant on seeded exact integer instances for `d=3,4,5,6`, Newton-sum checks for `d=1,...,8`, and exponent arithmetic | Self-contained supplementary regression stage |
 
-The coupling checker is deliberately scoped to the alleged sign discrepancy:
-it reconstructs the polynomial identity and all five parameter jets without
-using the stored matrix entries. It does **not** independently differentiate
-the full eight-node weight-simplex return map. Such a check could be added by
-performing the two moment solves over a first-order external-mass dual number,
-factoring the analytic target multiplier before setting its mass to zero, and
-then converting the returned core derivative to `(C,H)` coordinates. That
-would be useful additional defence in depth, but it is not needed to resolve
-the present algebraic sign question and is not claimed by this bundle.
+The coupling stage reconstructs the polynomial identity and all five parameter
+jets from the rational seed and root-isolation primitives. Stored matrix
+entries enter at the final comparison step. The result independently confirms
+the coupling signs in target-row/source-column order at the polynomial level.
 
 | Manuscript item | Certified premise | Program and direct assertion |
 |---|---|---|
@@ -61,7 +55,7 @@ the present algebraic sign question and is not claimed by this bundle.
 | C.3.17 and C.4.3 | Hopf parameter and alpha face margins | all_s_s4_local_majorants_exact.py: q-star margin > 2^-41 and alpha margin > 2^-24 |
 | C.4.1 | First P-phase weight slope s_1 > 1/16 | all_s_s4_local_majorants_exact.py: direct first-weight slope assertion |
 | C.4.2aa and C.5.4 | Every displayed lift-matrix entry, Neumann defect < 1/4, and lift inverse < 2^20 | all_s_s4_intrinsic_lift_exact.py: published_J_boxes, eta4, and inv4 assertions |
-| C.3.14 and C.4.21--C.4.22 | Both phase 9 x 9 systems and their inverse bound | all_s_s4_local_majorants_exact.py: midpoint-residual Neumann checks for the P and Q matrices; all_s_s4_intrinsic_lift_exact.py: the same matrices in the coefficient recursion |
+| C.3.14 and C.4.21--C.4.22 | Both phase 9 x 9 systems and their inverse bound | all_s_s4_local_majorants_exact.py: midpoint-residual Neumann bounds for the P and Q matrices; all_s_s4_intrinsic_lift_exact.py: the same matrices in the coefficient recursion |
 | C.3.14e | Rigorous enclosures for the three-phase quadratic coefficients beta and q | all_s_s4_intrinsic_lift_exact.py: executed P,Q,P recursion and explicit return_beta/return_q interval extraction; the coefficient identities themselves are derived algebraically in the manuscript |
 | C.4.10 | Root derivatives through order five | all_s_s4_local_majorants_exact.py: direct lower bound for Phi_t, direct derivative bound for the polynomial family, Bell-polynomial implicit-differentiation recurrence, and five asserted output bounds |
 | C.4.11--C.4.12 | Weight-chart derivatives through order five | all_s_s4_explicit_counterexample_checker.py: exact integer operation ledger from coefficient differentiation, quotient differentiation, and the affine chart formulas |
@@ -75,11 +69,9 @@ the present algebraic sign question and is not claimed by this bundle.
 | C.6.4--C.6.14 | Projector, moving-equilibrium, augmented inverse, Sobolev, radius, and Lyapunov--Schmidt contraction exponents | all_s_s4_explicit_counterexample_checker.py: projector bound including the infinity-to-Euclidean norm conversion, derivative bounds, and radius/contraction exponent assertions |
 | C.7.4--C.7.15 | Floquet roughness, nonlinear/remainder bounds, tube size, and all four Lyapunov--Perron inequalities | all_s_s4_explicit_counterexample_checker.py: Floquet, K, L, R, M, and N exponent assertions |
 
-The `all_s` SymPy stage is supplementary. Its characteristic-reduction check
-uses three seeded exact integer instances at each of `d=3,4,5,6`; it is a
-regression test for signs and block placement, not a symbolic proof for
-arbitrary `d`. The analytic general proof remains in the manuscript. The
-finite Newton-sum check covers `d=1,...,8`. No omitted or historical checks
-outside this directory are inputs to the active certificate. None of these
-finite stages replaces the analytic contractions in C.6, C.7, C.15, and
+The `all_s` SymPy stage provides symbolic elevation identities and regression
+coverage for signs and block placement. The characteristic-reduction
+regression uses three seeded exact integer instances at each of `d=3,4,5,6`;
+the finite Newton-sum range is `d=1,...,8`. The manuscript supplies the general
+characteristic argument and the analytic contractions in C.6, C.7, C.15, and
 C.16.

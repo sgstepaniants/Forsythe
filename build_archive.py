@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rebuild the certificate manifest and ZIP with reproducible metadata."""
+"""Deterministic builder for the certificate manifest and ZIP."""
 
 from __future__ import annotations
 

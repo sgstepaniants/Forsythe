@@ -24,8 +24,7 @@ fi
 
 if ! "$FORSYTHE_PYTHON" -c \
   'import sys; sys.exit(0 if __debug__ else 1)' >/dev/null 2>&1; then
-  echo 'Verification requires Python assertions; do not use -O/-OO.' >&2
-  echo 'Unset PYTHONOPTIMIZE and retry.' >&2
+  echo 'Verification requires Python assertions (-O/-OO disable them).' >&2
   exit 4
 fi
 
@@ -34,9 +33,9 @@ require_sympy() {
     'import mpmath, sympy, sys; sys.exit(0 if sympy.__version__ == "1.14.0" and mpmath.__version__ == "1.3.0" else 1)' \
       >/dev/null 2>&1; then
     echo 'SymPy 1.14.0 and mpmath 1.3.0 are required for this stage.' >&2
-    echo 'Install the pinned dependency with:' >&2
+    echo 'Pinned dependency command:' >&2
     echo '  python3 -m pip install -r requirements-verification.txt' >&2
-    echo 'or set FORSYTHE_PYTHON to a Python executable that provides it.' >&2
+    echo 'FORSYTHE_PYTHON selects another compatible interpreter.' >&2
     exit 3
   fi
 }
